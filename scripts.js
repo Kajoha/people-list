@@ -1,7 +1,6 @@
-// Nuestro API:
 // https://5d2cd8678c90070014972942.mockapi.io/people
 
-const apiUrl = "https://603837744e3a9b0017e92e02.mockapi.io/people";
+const apiUrl = "https://603837744e3a9b0017e92e02.mockapi.io/people/";
 
 // ELEMENTOS
 const addButton = document.querySelector(".add-person__button");
@@ -166,7 +165,7 @@ Clona tu propio API: https://mockapi.io/clone/5d2cd8678c90070014972943
 
 // PROXIMO MARTES 2/3/2021
 
-    4.1. Es escuchar el evento "submit" del formulario
+    4.1. Es escuchar el evento "submit" del formulario - listo
     4.2. Obtener los values de los inputs
     4.3. Hacer el fetch de un metodo POST
           4.3.1. Construir un objeto para el body del request
@@ -176,10 +175,51 @@ Clona tu propio API: https://mockapi.io/clone/5d2cd8678c90070014972943
 
 */
 
-fetch(apiUrl, {
+const form = document.querySelector("form");
+
+form.addEventListener("submit", evt => {
+  addPeople();
+  evt.preventDefault();
+  console.log(evt);
+});
+
+function addPeople() {
+  const fullName = document.getElementById("name").value;
+  const phoneNumber = document.getElementById("phone").value;
+  const email = document.getElementById("email").value;
+  const city = document.getElementById("city").value;
+
+  if (fullName == "" || phoneNumber == "" || email == "" || city == "") {
+    alert("Faltan campos por ingresar");
+    return;
+  }
+
+  const people = {
+    fullName,
+    phoneNumber,
+    email,
+    city
+  };
+
+  fetch(apiUrl, {
     method: "POST",
+    body: JSON.stringify(people),
     headers: {
-        "Content-Type": "application/json"
-    },
-    body: ....
-}).then(...)
+      "Content-Type": "application/json"
+    }
+  })
+    .then(res => res.json())
+    .catch(error => console.error("Error:", error))
+    .then(_people => {
+      const strPeople = `
+        <li data-id="${_people.id}">
+          <h3 role="button">${_people.fullName}</h3>
+          <button>X</button>
+        </li>
+      `;
+      htmlListElement.innerHTML += strPeople;
+      alert("Persona fue agregada satisfactoriamente");
+    });
+
+  form.reset();
+}
